@@ -29,6 +29,9 @@
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script>
+  
+  var slider_properties = {};
+  
   $( function() {
     // setup master volume
     $( "#master" ).slider({
@@ -39,6 +42,8 @@
       max:15,
       animate: true,
       slide: function( event, ui ) {
+      
+        
         $( "#amount" ).html( ui.value );
         $.ajax({
             url : '/set_eq?a=' + ui.value,
@@ -54,12 +59,44 @@
     // setup graphic EQ
     $( "#eq > span" ).each(function() {
       // read initial values from markup and remove that
-      var value = parseInt( $( this ).text(), 10 );
+      var val_list    = $(this).text().split("-");
+      
+      var filter_chan = parseInt  ( val_list[0], 10 );
+      var freq        = parseInt  ( val_list[1], 10 );
+      var bandwidth   = parseFloat( val_list[2]);
+      var gain       = parseInt  ( val_list[3], 10 );
+      
+      slider_properties[filter_chan] = {}
+      
+      slider_properties[filter_chan]["freq"]       = freq;
+      slider_properties[filter_chan]["bandwidth"]  = bandwidth;
+      slider_properties[filter_chan]["gain"]       = gain;
+      
       $( this ).empty().slider({
-        value: value,
+        
+        value: gain,
         range: "min",
+        min:-48,
+        max:15,
         animate: true,
-        orientation: "vertical"
+        orientation: "vertical",
+        slide: function( event, ui ) {
+        
+        
+            var filter_chan = $(this).index();
+            slider_properties[filter_chan]["gain"] = ui.value;
+            
+            var gain      = ui.value;
+            var freq       = slider_properties[filter_chan]["freq"];
+            var bandwidth  = slider_properties[filter_chan]["bandwidth"];
+            
+            $( "#amount" ).html( ui.value );
+            $.ajax({
+                url : '/set_eq?filter_chan=' + filter_chan + '&bandwidth=' + bandwidth +'&freq=' + freq + '&gain=' + gain,
+                success: function(data) {
+                }
+            });
+        }
       });
     });
   } );
@@ -67,26 +104,33 @@
 </head>
 <body>
  
-<p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+<!--<p class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
   <span class="ui-icon ui-icon-volume-on" style="float:left; margin:-2px 5px 0 0;"></span>
   Master volume
-</p>
-<p id="amount">aoei</p>
-<div id="master" style="width:260px; margin:15px;"></div>
+</p> -->
+<!-- <p id="amount">0</p> -->
+<!--<div id="master" style="width:260px; margin:15px;"></div> -->
  
 <p class="ui-state-default ui-corner-all" style="padding:4px;margin-top:4em;">
   <span class="ui-icon ui-icon-signal" style="float:left; margin:-2px 5px 0 0;"></span>
   Graphic EQ
 </p>
  
+<span>gain: </span><span id="amount">0</span>
 <div id="eq">
-  <span>88</span>
-  <span>77</span>
-  <span>55</span>
-  <span>33</span>
-  <span>40</span>
-  <span>45</span>
-  <span>70</span>
+<!--   channel - freq (Hz) - bandwidth (octaves) - init -->
+  <span>0-40-0.66-0</span>
+  <span>1-63-0.66-0</span>
+  <span>2-100-0.66-0</span>
+  <span>3-160-0.66-0</span>
+  <span>4-250-0.66-0</span>
+  <span>5-400-0.66-0</span>
+  <span>6-630-0.66-0</span>
+  <span>7-1000-0.66-0</span>
+  <span>8-1600-0.66-0</span>
+  <span>9-2500-0.66-0</span>
+  <span>10-4000-0.66-0</span>
+  <span>11-6300-0.66-0</span>
 </div>
  
  
