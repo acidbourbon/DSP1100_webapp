@@ -57,9 +57,9 @@ class behringer_eq:
     
   def set_bandwidth(self,filter_chan,bandwidth):
     
-    if filter_chan in self.bandwidth_mem:
-      if self.bandwidth_mem[filter_chan] == bandwidth:
-        return
+    #if filter_chan in self.bandwidth_mem:
+      #if self.bandwidth_mem[filter_chan] == bandwidth:
+        #return
     
     self.select_filter_chan(filter_chan)
     # value is in 1/60 octaves, argument bandwith is given in octaves
@@ -68,9 +68,9 @@ class behringer_eq:
     
   def set_freq(self,filter_chan,freq):
       
-    if filter_chan in self.freq_mem:
-      if self.freq_mem[filter_chan] == freq:
-        return
+    #if filter_chan in self.freq_mem:
+      #if self.freq_mem[filter_chan] == freq:
+        #return
     
     self.select_filter_chan(filter_chan)
     self.output.send(mido.Message('control_change', control=13, value=int(self.freq_lookup[int(freq)])))
