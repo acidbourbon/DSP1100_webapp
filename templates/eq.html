@@ -94,6 +94,11 @@
   
   <script>
   
+  function Q_of_N(N) {
+    var twopowN = Math.pow(2,N);
+    return Math.sqrt(twopowN)/(twopowN-1);
+  }
+  
   var slider_properties = {};
   
   function update_backend(filter_chan){
