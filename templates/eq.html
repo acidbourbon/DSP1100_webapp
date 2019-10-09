@@ -115,29 +115,6 @@
   }
   
   $( function() {
-    // setup master volume
-    $( "#master" ).slider({
-      value: 0,
-      orientation: "horizontal",
-      range: "min",
-      min:-48,
-      max:15,
-      animate: true,
-      slide: function( event, ui ) {
-      
-        
-        $( "#amount" ).html( ui.value );
-        $.ajax({
-            url : '/set_eq?a=' + ui.value,
-            success: function(data) {
-//                 $('#add').html(data['a'] + ' + ' + data['b'] + ' = ' + data['add']);
-//                 $('#subtract').html(data['a'] + ' - ' + data['b'] + ' = ' + data['subtract']);
-//                 $('#multiply').html(data['a'] + ' * ' + data['b'] + ' = ' + data['multiply']);
-//                 $('#divide').html(data['a'] + ' / ' + data['b'] + ' = ' + data['divide']);
-            }
-        });
-      }
-    });
     // setup graphic EQ
     $( "#eq > span" ).each(function() {
       // read initial values from markup and remove that
