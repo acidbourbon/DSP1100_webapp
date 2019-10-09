@@ -149,7 +149,7 @@ def index():
 @app.route('/set_eq')
 def set_eq():
     #a = int(request.args.get('a', 0))
-    freq = int(request.args.get('freq', 500))
+    freq = float(request.args.get('freq', 500))
     bandwidth = float(request.args.get('bandwidth', 0.66))
     filter_chan = int(request.args.get('filter_chan', 0))
     gain = int(request.args.get('gain', 0))

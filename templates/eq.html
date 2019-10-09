@@ -123,7 +123,7 @@
       var val_list    = $(this).text().split("-");
       
       var filter_chan = parseInt  ( val_list[0], 10 );
-      var freq        = parseInt  ( val_list[1], 10 );
+      var freq        = parseFloat  ( val_list[1], 10 );
       var bandwidth   = parseFloat( val_list[2]);
       var gain       = parseInt  ( val_list[3], 10 );
       
