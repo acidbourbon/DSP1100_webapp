@@ -22,7 +22,10 @@
 <!--   <link rel="stylesheet" href="https://jqueryui.com/resources/demos/style.css"> -->
   <link rel="stylesheet" href="/static/style.css">
   <style>
-  #eq > span {
+  #gain > span {
+    height:120px; float:left; margin:15px
+  }
+  #freq > span {
     height:120px; float:left; margin:15px
   }
   </style>
@@ -107,7 +110,7 @@
     var freq       = slider_properties[filter_chan]["freq"];
     var bandwidth  = slider_properties[filter_chan]["bandwidth"];
     
-    $( "#amount" ).html( "ch "+filter_chan + " gain " + gain );
+    $( "#amount" ).html( "ch "+filter_chan + " gain " + gain + " freq " + freq );
     
     eq_offset = gain/10;
     draw();
@@ -121,7 +124,7 @@
   
   $( function() {
     // setup graphic EQ
-    $( "#eq > span" ).each(function() {
+    $( "#gain > span" ).each(function() {
       // read initial values from markup and remove that
       var val_list    = $(this).text().split("-");
       
@@ -135,6 +138,8 @@
       slider_properties[filter_chan]["freq"]       = freq;
       slider_properties[filter_chan]["bandwidth"]  = bandwidth;
       slider_properties[filter_chan]["gain"]       = gain;
+      
+      $("#freq").append("<span>"+filter_chan+"</span>");
       
       $( this ).empty().slider({
         
@@ -150,11 +155,32 @@
             var filter_chan = $(this).index();
             slider_properties[filter_chan]["gain"] = ui.value;
             update_backend(filter_chan);
-
            
         }
       });
     });
+    
+    $( "#freq > span" ).each(function() {
+      $( this ).empty().slider({
+        
+        value: 50,
+        range: "min",
+        min:0,
+        max:100,
+        animate: true,
+        orientation: "vertical",
+        slide: function( event, ui ) {
+        
+        
+            var filter_chan = $(this).index();
+            slider_properties[filter_chan]["freq"] = Math.exp(Math.log(20)+ui.value/100.*(Math.log(20000)-Math.log(20)));
+            update_backend(filter_chan);
+           
+        }
+      });
+       
+    });
+    
   } );
   </script>
 </head>
@@ -176,7 +202,7 @@
 <canvas id="canvas" width="600" height="108"></canvas>
  
 <p id="amount">0</p>
-<div id="eq">
+<p id="gain">
 <!--   channel - freq (Hz) - bandwidth (octaves) - init -->
   <span>0-40-0.66-0</span>
   <span>1-63-0.66-0</span>
@@ -190,7 +216,15 @@
   <span>9-2500-0.66-0</span>
   <span>10-4000-0.66-0</span>
   <span>11-6300-0.66-0</span>
-</div>
+</p>
+
+<p class="ui-state-default ui-corner-all" style="padding:4px;margin-top:4em;">
+  <span class="ui-icon ui-icon-signal" style="float:left; margin:-2px 5px 0 0;"></span>
+  Graphic EQ freq
+</p>
+
+<p id="freq">
+</p>
  
  
 </body>
