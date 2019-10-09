@@ -23,10 +23,13 @@
   <link rel="stylesheet" href="/static/style.css">
   <style>
   #gain > span {
-    height:120px; float:left; margin:15px
+    height:120px; float: left; margin:15px
   }
   #freq > span {
-    height:120px; float:left; margin:15px
+    height:120px; float: left; margin:15px
+  }
+  #bandwidth > span {
+    height:120px; float: left; margin:15px
   }
   </style>
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -140,6 +143,7 @@
       slider_properties[filter_chan]["gain"]       = gain;
       
       $("#freq").append("<span>"+filter_chan+"</span>");
+      $("#bandwidth").append("<span>"+filter_chan+"</span>");
       
       $( this ).empty().slider({
         
@@ -181,6 +185,27 @@
        
     });
     
+    $( "#bandwidth > span" ).each(function() {
+      $( this ).empty().slider({
+        
+        value: 50,
+        range: "min",
+        min:0,
+        max:100,
+        animate: true,
+        orientation: "vertical",
+        slide: function( event, ui ) {
+        
+        
+            var filter_chan = $(this).index();
+            slider_properties[filter_chan]["bandwidth"] = Math.exp(Math.log(20)+ui.value/100.*(Math.log(20000)-Math.log(20)));
+            update_backend(filter_chan);
+           
+        }
+      });
+       
+    });
+    
   } );
   </script>
 </head>
@@ -202,7 +227,7 @@
 <canvas id="canvas" width="600" height="108"></canvas>
  
 <p id="amount">0</p>
-<p id="gain">
+<div id="gain">
 <!--   channel - freq (Hz) - bandwidth (octaves) - init -->
   <span>0-40-0.66-0</span>
   <span>1-63-0.66-0</span>
@@ -216,15 +241,31 @@
   <span>9-2500-0.66-0</span>
   <span>10-4000-0.66-0</span>
   <span>11-6300-0.66-0</span>
-</p>
+</div>
 
-<p class="ui-state-default ui-corner-all" style="padding:4px;margin-top:4em;">
-  <span class="ui-icon ui-icon-signal" style="float:left; margin:-2px 5px 0 0;"></span>
-  Graphic EQ freq
-</p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
-<p id="freq">
-</p>
+<div id="freq">
+</div>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<div id="bandwidth">
+</div>
  
  
 </body>
