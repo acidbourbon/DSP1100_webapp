@@ -5,43 +5,77 @@ import time
 #import numpy as np
 
 import mido
+import numpy as np
 
 class behringer_eq:
   output = None
   filter_chan = -1
-  freq_lookup = {
-      20:0,
-      25:1,
-      32:2,
-      40:3,
-      60:4,
-      63:5,
-      80:6,
-      100:7,
-      125:8,
-      160:9,
-      200:10,
-      250:11,
-      320:12,
-      400:13,
-      500:14,
-      630:15,
-      800:16,
-      1000:17,
-      1250:18,
-      1600:19,
-      2000:20,
-      2500:21,
-      3200:22,
-      4000:23,
-      5000:24,
-      6300:25,
-      8000:26,
-      10000:27,
-      12500:28,
-      16000:29,
-      20000:30
-  }
+  
+  iso_freq_list = np.array([
+        20,
+        25,
+        31.5,
+        40,
+        50,
+        63,
+        80,
+        100,
+        125,
+        160,
+        200,
+        250,
+        315,
+        400,
+        500,
+        630,
+        800,
+        1000,
+        1250,
+        1600,
+        2000,
+        2500,
+        3150,
+        4000,
+        5000,
+        6300,
+        8000,
+        10000,
+        12500,
+        16000,
+        20000
+        ])
+
+
+  def find_fine_freq(self,freq):
+      
+    if freq < 20:
+      freq = 20
+      
+    if freq > 20000:
+      freq = 20000
+      
+    index_floor = np.nonzero(iso_freq_list <= freq)[0][-1] # last index of iso_freq_list that is <= freq
+    index_ceil  = index_floor + 1
+    
+    freq_floor  = iso_freq_list[index_floor]
+    freq_ceil   = iso_freq_list[index_ceil]
+    
+    fine_freq_list = np.linspace(freq_floor,freq_ceil,21) # last element is never needed
+    
+    closest_matching_index = np.argmin(abs(fine_freq_list-freq))
+    fine_freq = fine_freq_list[closest_matching_index]
+    
+    freq_midi_val      = index_floor
+    freq_fine_midi_val = closest_matching_index
+    if (closest_matching_index >10):
+      freq_midi_val = index_ceil
+      freq_fine_midi_val = closest_matching_index - 20
+    
+    freq_fine_midi_val += 9
+    
+    return (freq_midi_val,freq_fine_midi_val)
+    
+  
   
   bandwidth_mem = {}
   freq_mem      = {}
@@ -80,10 +114,14 @@ class behringer_eq:
     #if filter_chan in self.freq_mem:
       #if self.freq_mem[filter_chan] == freq:
         #return
+    freq_midi_val, freq_fine_midi_val = self.find_fine_freq(freq)
     
     self.select_filter_chan(filter_chan)
     try:
-      self.output.send(mido.Message('control_change', control=13, value=int(self.freq_lookup[int(freq)])))
+      # coarse value
+      self.output.send(mido.Message('control_change', control=13, value=int(freq_midi_val)))
+      # fine value
+      self.output.send(mido.Message('control_change', control=14, value=int(freq_fine_midi_val)))
     except:
       pass
     self.freq_mem[filter_chan] = freq
