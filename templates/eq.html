@@ -100,9 +100,15 @@
   
   <script>
   
-  function Q_of_N(N) {
-    var twopowN = Math.pow(2,N);
-    return Math.sqrt(twopowN)/(twopowN-1);
+  
+  function single_filter_response_db(x,gain,freq,bandwidth){
+    var twopowN = Math.pow(2,bandwith); // bandwidth in octaves
+    var Q_of_N = Math.sqrt(twopowN)/(twopowN-1);
+    var gamma = 1/Q_of_N;
+    var freq_diff = x-freq;
+    var intensity = 1/( (freq_diff*freq_diff) + (gamma*gamma)/4)
+    return 10*Math.log10(intensity)
+  
   }
   
   var slider_properties = {};
