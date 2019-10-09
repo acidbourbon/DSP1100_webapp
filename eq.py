@@ -47,13 +47,19 @@ class behringer_eq:
   freq_mem      = {}
   
   def __init__(self):
-    self.output = mido.open_output('CH345 MIDI 1') # this is the logilink midi thing
+    try:
+      self.output = mido.open_output('CH345 MIDI 1') # this is the logilink midi thing
+    except:
+      pass
     
   def set_gain(self,filter_chan,gain):
     self.select_filter_chan(filter_chan)
     # set gain for current filter : value = 0-64
     # value 48 is +0dB, value 48+x is +x dB, 48-x is -x dB, it is that easy
-    self.output.send(mido.Message('control_change', control=16, value=gain+48))
+    try:
+      self.output.send(mido.Message('control_change', control=16, value=gain+48))
+    except:
+      pass
     
   def set_bandwidth(self,filter_chan,bandwidth):
     
@@ -63,7 +69,10 @@ class behringer_eq:
     
     self.select_filter_chan(filter_chan)
     # value is in 1/60 octaves, argument bandwith is given in octaves
-    self.output.send(mido.Message('control_change', control=15, value=int(bandwidth*60.)))
+    try:
+      self.output.send(mido.Message('control_change', control=15, value=int(bandwidth*60.)))
+    except:
+      pass
     self.bandwidth_mem[filter_chan] = bandwidth
     
   def set_freq(self,filter_chan,freq):
@@ -73,14 +82,20 @@ class behringer_eq:
         #return
     
     self.select_filter_chan(filter_chan)
-    self.output.send(mido.Message('control_change', control=13, value=int(self.freq_lookup[int(freq)])))
+    try:
+      self.output.send(mido.Message('control_change', control=13, value=int(self.freq_lookup[int(freq)])))
+    except:
+      pass
     self.freq_mem[filter_chan] = freq
     
 
   def select_filter_chan(self,filter_chan):
     # select filter : value = 0-11
     if(filter_chan != self.filter_chan): ## only send if different channel is selected
-      self.output.send(mido.Message('control_change', control=10, value=filter_chan))
+      try:
+        self.output.send(mido.Message('control_change', control=10, value=filter_chan))
+      except:
+        pass
       self.filter_chan = filter_chan
     
 
@@ -95,30 +110,18 @@ def index():
 
 @app.route('/set_eq')
 def set_eq():
-    a = int(request.args.get('a', 0))
+    #a = int(request.args.get('a', 0))
     freq = int(request.args.get('freq', 500))
     bandwidth = float(request.args.get('bandwidth', 0.66))
     filter_chan = int(request.args.get('filter_chan', 0))
     gain = int(request.args.get('gain', 0))
     
-    print("received a={:d}".format(a))
-    #b = int(request.args.get('b', 0))
-    #div = 'na'
-    #if b != 0:
-        #div = a/b
-    #my_eq.set_gain(0,a)
     time.sleep(0.02)
     my_eq.set_freq(filter_chan,freq)
     my_eq.set_bandwidth(filter_chan,bandwidth)
     my_eq.set_gain(filter_chan,gain)
     
     return jsonify({
-        #"a"        :  a,
-        #"b"        :  b,
-        #"add"      :  a+b,
-        #"multiply" :  a*b,
-        #"subtract" :  a-b,
-        #"divide"   :  div,
         "dummy" : 0
     })
 
