@@ -40,7 +40,14 @@
         eq_offset = 0;
         function fun1(x) {return Math.sin(x);  }
         function fun2(x) {return Math.cos(3*x);}
-        function eq_response(x) { return full_filter_response( Math.pow(10,(x/2.325))  )/10} // display +-10 db // convert x to frequency, x=10 -> f=20000
+        function eq_response(x) { 
+           var f = Math.exp(Math.log(20)+x/10.*(Math.log(20000)-Math.log(20)));
+           return single_filter_response_db( f,
+             slider_properties[0]["gain"],
+             slider_properties[0]["freq"],
+             slider_properties[0]["bandwidth"]
+           )/30
+        } // display +-10 db // convert x to frequency, x=10 -> f=20000
         
         function draw() {
          var canvas = document.getElementById("canvas");
@@ -109,7 +116,7 @@
     var gamma = 1/Q_of_N;
     var freq_diff = x-freq;
     var intensity = 1/( (freq_diff*freq_diff) + (gamma*gamma)/4)
-    return 10*Math.log10(intensity)
+    return gain + 10*Math.log10(intensity)
   
   }
   
