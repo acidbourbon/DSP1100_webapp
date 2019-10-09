@@ -54,11 +54,11 @@ class behringer_eq:
     if freq > 20000:
       freq = 20000
       
-    index_floor = np.nonzero(iso_freq_list <= freq)[0][-1] # last index of iso_freq_list that is <= freq
+    index_floor = np.nonzero(self.iso_freq_list <= freq)[0][-1] # last index of iso_freq_list that is <= freq
     index_ceil  = index_floor + 1
     
-    freq_floor  = iso_freq_list[index_floor]
-    freq_ceil   = iso_freq_list[index_ceil]
+    freq_floor  = self.iso_freq_list[index_floor]
+    freq_ceil   = self.iso_freq_list[index_ceil]
     
     fine_freq_list = np.linspace(freq_floor,freq_ceil,21) # last element is never needed
     
