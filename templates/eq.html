@@ -61,9 +61,10 @@
 //          clear canvas
          ctx.clearRect(0, 0, canvas.width, canvas.height);
 //          axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
-         axes.x0 = 0 + .05*canvas.width;  // x0 pixels from left to x=0
+         axes.x0 = 0;// + .05*canvas.width;  // x0 pixels from left to x=0
+         axes.x1 = 0 + 1*canvas.width;  
          axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
-         axes.scale = canvas.width*0.9/10;                 // 10 from 20 to 20k Hz
+         axes.scale = canvas.width*1/10;                 // 10 from 20 to 20k Hz
 //          axes.doNegativeX = true;
          axes.doNegativeX = false;
         
@@ -91,12 +92,14 @@
         
         function showAxes(ctx,axes) {
          var x0=axes.x0, w=ctx.canvas.width;
+         var x1=axes.x1, w=ctx.canvas.width;
          var y0=axes.y0, h=ctx.canvas.height;
          var xmin = axes.doNegativeX ? 0 : x0;
          ctx.beginPath();
          ctx.strokeStyle = "rgb(128,128,128)"; 
          ctx.moveTo(xmin,y0); ctx.lineTo(w,y0);  // X axis
          ctx.moveTo(x0,0);    ctx.lineTo(x0,h);  // Y axis
+         ctx.moveTo(x1,0);    ctx.lineTo(x1,h);  // Y axis
          ctx.stroke();
         }
   
