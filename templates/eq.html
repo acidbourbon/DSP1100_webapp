@@ -87,8 +87,11 @@
          funGraph(ctx,axes,function(){return 8*-3*y_scaling;},"rgb(128,128,128)",1);
          funGraph(ctx,axes,function(){return 8*-4*y_scaling;},"rgb(128,128,128)",1);
 //          funGraph(ctx,axes,fun2,"rgb(66,44,255)",2);
-         funGraph(ctx,axes,eq_response,"rgb(200,0,0)",3);
-         filterGraph(ctx,axes,0,"rgb(0,0,200)",3);
+//          funGraph(ctx,axes,eq_response,"rgb(200,0,0)",3);
+
+         for( i = 0;i <12;i++){
+         single_filter_graph(ctx,axes,i,"rgb(100,100,255)",1);
+         }
 //          funGraph(ctx,axes,eq_response_legacy,"rgb(200,0,0)",4);
         }
         
@@ -108,8 +111,8 @@
          ctx.stroke();
         }
         
-        function filterGraph (ctx,axes,i,color,thick) {
-         console.log("filter Graph was called for ch " + i)
+        function single_filter_graph (ctx,axes,i,color,thick) {
+//          console.log("filter Graph was called for ch " + i)
          var xx, yy, dx=4, x0=axes.x0, y0=axes.y0, scale=axes.scale;
          var iMax = Math.round((ctx.canvas.width-x0)/dx);
          var iMin = axes.doNegativeX ? Math.round(-x0/dx) : 0;
@@ -212,14 +215,14 @@
        if ( gain == filter_mem[i]["gain"]){
          if ( freq == filter_mem[i]["freq"]){
            if ( bandwidth == filter_mem[i]["bandwidth"]){
-             console.log("calc_single_filter here ... nothing changed for ch "+i);
+//              console.log("calc_single_filter here ... nothing changed for ch "+i);
              return; // nothing changed
            }
          }
        }
      }
      // if it has changed
-     console.log("calc_single_filter here ... sth changed for ch "+i);
+//      console.log("calc_single_filter here ... sth changed for ch "+i);
      
      filter_mem[i] = {}
      
