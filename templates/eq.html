@@ -39,7 +39,7 @@
   
   <script>
         eq_offset = 0;
-        y_scaling = 0.2;
+        y_scaling = 0.05;
         function fun1(x) {  return math.evaluate("re(exp(2*"+x+"*(i-0.2)))");  }
         function fun2(x) {return Math.cos(3*x);}
         function eq_response(x) { 
@@ -70,6 +70,14 @@
         
          showAxes(ctx,axes);
 //          funGraph(ctx,axes,fun1,"rgb(11,153,11)",1); 
+         funGraph(ctx,axes,function(){return 8*1*y_scaling;},"rgb(128,128,128)",1);
+         funGraph(ctx,axes,function(){return 8*2*y_scaling;},"rgb(128,128,128)",1);
+         funGraph(ctx,axes,function(){return 8*3*y_scaling;},"rgb(128,128,128)",1);
+         funGraph(ctx,axes,function(){return 8*4*y_scaling;},"rgb(128,128,128)",1);
+         funGraph(ctx,axes,function(){return 8*-1*y_scaling;},"rgb(128,128,128)",1);
+         funGraph(ctx,axes,function(){return 8*-2*y_scaling;},"rgb(128,128,128)",1);
+         funGraph(ctx,axes,function(){return 8*-3*y_scaling;},"rgb(128,128,128)",1);
+         funGraph(ctx,axes,function(){return 8*-4*y_scaling;},"rgb(128,128,128)",1);
 //          funGraph(ctx,axes,fun2,"rgb(66,44,255)",2);
          funGraph(ctx,axes,eq_response,"rgb(200,0,0)",3);
         }
@@ -125,7 +133,7 @@
         var Q_of_N = Math.sqrt(twopowN)/(twopowN-1);
         var g     = Math.pow(10,slider_properties[i]["gain"]/10);
         var omega = x / slider_properties[i]["freq"]; // frequency normalized by filter frequency
-        var B     = 1/Q_of_N;
+        var B     = 1/Q_of_N   *Math.pow(g,-0.5);
         var omega_sqr = omega*omega;
         eval_string += "((-1*"+omega_sqr+"+"+g*B*omega+"*i +1 )/(-1*"+omega_sqr+"+"+B*omega+"*i + 1))*";
         
@@ -206,7 +214,7 @@
         value: gain,
         range: "min",
         min:-48,
-        max:15,
+        max:16,
         animate: true,
         orientation: "vertical",
         slide: function( event, ui ) {
