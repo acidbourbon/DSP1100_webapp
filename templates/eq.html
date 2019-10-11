@@ -88,6 +88,7 @@
          funGraph(ctx,axes,function(){return 8*-4*y_scaling;},"rgb(128,128,128)",1);
 //          funGraph(ctx,axes,fun2,"rgb(66,44,255)",2);
          funGraph(ctx,axes,eq_response,"rgb(200,0,0)",3);
+         filterGraph(ctx,axes,0,"rgb(0,0,200)",3);
 //          funGraph(ctx,axes,eq_response_legacy,"rgb(200,0,0)",4);
         }
         
@@ -106,6 +107,29 @@
          }
          ctx.stroke();
         }
+        
+        function filterGraph (ctx,axes,i,color,thick) {
+         console.log("filter Graph was called for ch " + i)
+         var xx, yy, dx=4, x0=axes.x0, y0=axes.y0, scale=axes.scale;
+         var iMax = Math.round((ctx.canvas.width-x0)/dx);
+         var iMin = axes.doNegativeX ? Math.round(-x0/dx) : 0;
+         ctx.beginPath();
+         ctx.lineWidth = thick;
+         ctx.strokeStyle = color;
+         
+         calc_single_filter(i);
+         console.log(filter_mem[i]);
+         var c = 0;
+         for (x=0; x <= 1; x+=mem_step_size){
+           xx = x*(ctx.canvas.width-x0);
+           yy = scale*filter_mem[i]["y"][c]*y_scaling;
+           if (xx==0)   ctx.moveTo(x0+xx,y0-yy);
+           else         ctx.lineTo(x0+xx,y0-yy);
+           c++;
+         }
+         ctx.stroke();
+        }
+        
         
         function showAxes(ctx,axes) {
          var x0=axes.x0, w=ctx.canvas.width;
@@ -173,6 +197,42 @@
     }
     return y;
   }
+  
+  
+  var mem_step_size = 0.01;
+  var filter_mem = {};
+  
+  function calc_single_filter(i){
+  
+     var gain       = slider_properties[i]["gain"];
+     var freq       = slider_properties[i]["freq"];
+     var bandwidth  = slider_properties[i]["bandwidth"];
+     
+     if (i in filter_mem){ // entry exists
+       if ( gain == filter_mem[i]["gain"]){
+         if ( freq == filter_mem[i]["freq"]){
+           if ( bandwidth == filter_mem[i]["bandwidth"]){
+             console.log("calc_single_filter here ... nothing changed for ch "+i);
+             return; // nothing changed
+           }
+         }
+       }
+     }
+     // if it has changed
+     console.log("calc_single_filter here ... sth changed for ch "+i);
+     
+     filter_mem[i] = {}
+     
+     filter_mem[i]["gain"] = gain;
+     filter_mem[i]["freq"] = freq;
+     filter_mem[i]["bandwidth"] = bandwidth;
+     filter_mem[i]["y"] = []
+     for (x=0; x <= 1; x+=mem_step_size){
+       var response = single_filter_response(f_of_x(x),gain,freq,bandwidth)
+       filter_mem[i]["y"].push(response);
+     }
+  }
+  
   
   var slider_properties = {};
   
