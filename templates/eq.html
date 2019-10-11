@@ -90,7 +90,7 @@
 //          funGraph(ctx,axes,eq_response,"rgb(200,0,0)",3);
 
          for( i = 0;i <12;i++){
-         single_filter_graph(ctx,axes,i,"rgb(200,200,255)",1);
+         single_filter_graph(ctx,axes,i,"rgb(128,128,255)",1);
          }
          full_filter_graph(ctx,axes,"rgb(255,0,0)",3);
 //          funGraph(ctx,axes,eq_response_legacy,"rgb(200,0,0)",4);
@@ -202,12 +202,12 @@
     var eval_string = "";
         var twopowN = Math.pow(2,bandwidth); // bandwidth in octaves
         var Q_of_N = Math.sqrt(twopowN)/(twopowN-1);
-        var g     = Math.pow(10,gain/10);
+        var g     = Math.pow(10,gain/20);
         var omega = f / freq; // frequency normalized by filter frequency
         var B     = 1/Q_of_N   *Math.pow(g,-0.5);
         var omega_sqr = omega*omega;
         eval_string += "((-1*"+omega_sqr+"+"+g*B*omega+"*i +1 )/(-1*"+omega_sqr+"+"+B*omega+"*i + 1))";
-    return 10*Math.log10( math.evaluate("abs("+eval_string+")"));
+    return 20*Math.log10( math.evaluate("abs("+eval_string+")"));
   }
   function full_filter_response(x){
     y = 0; 
