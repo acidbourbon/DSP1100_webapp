@@ -44,12 +44,21 @@
         function fun2(x) {return Math.cos(3*x);}
         function eq_response(x) { 
            var f = Math.exp(Math.log(20)+x/10.*(Math.log(20000)-Math.log(20)));
-//            return single_filter_response_db( f,
+//            return single_filter_response( f,
 //              slider_properties[0]["gain"],
 //              slider_properties[0]["freq"],
 //              slider_properties[0]["bandwidth"]
-//            )/30
+//            ) * y_scaling;
               return full_filter_response(f) * y_scaling;
+        } // display +-10 db // convert x to frequency, x=10 -> f=20000
+        function eq_response_legacy(x) { 
+           var f = Math.exp(Math.log(20)+x/10.*(Math.log(20000)-Math.log(20)));
+//            return single_filter_response( f,
+//              slider_properties[0]["gain"],
+//              slider_properties[0]["freq"],
+//              slider_properties[0]["bandwidth"]
+//            ) * y_scaling;
+              return full_filter_response_legacy(f) * y_scaling+0.1;
         } // display +-10 db // convert x to frequency, x=10 -> f=20000
         
         function draw() {
@@ -80,6 +89,7 @@
          funGraph(ctx,axes,function(){return 8*-4*y_scaling;},"rgb(128,128,128)",1);
 //          funGraph(ctx,axes,fun2,"rgb(66,44,255)",2);
          funGraph(ctx,axes,eq_response,"rgb(200,0,0)",3);
+//          funGraph(ctx,axes,eq_response_legacy,"rgb(200,0,0)",4);
         }
         
         function funGraph (ctx,axes,func,color,thick) {
@@ -124,7 +134,7 @@
   <script>
   
   
-  function full_filter_response(x){
+  function full_filter_response_legacy(x){
   
     var eval_string = "";
     
@@ -140,6 +150,29 @@
     }
     eval_string += "1";
     return 10*Math.log10( math.evaluate("abs("+eval_string+")"));
+  }
+  
+  function single_filter_response(f,gain,freq,bandwidth){
+    var eval_string = "";
+        var twopowN = Math.pow(2,bandwidth); // bandwidth in octaves
+        var Q_of_N = Math.sqrt(twopowN)/(twopowN-1);
+        var g     = Math.pow(10,gain/10);
+        var omega = f / freq; // frequency normalized by filter frequency
+        var B     = 1/Q_of_N   *Math.pow(g,-0.5);
+        var omega_sqr = omega*omega;
+        eval_string += "((-1*"+omega_sqr+"+"+g*B*omega+"*i +1 )/(-1*"+omega_sqr+"+"+B*omega+"*i + 1))";
+    return 10*Math.log10( math.evaluate("abs("+eval_string+")"));
+  }
+  function full_filter_response(x){
+    y = 0; 
+    for ( i = 0 ; i< 12 ; i++){
+       y += single_filter_response(x,
+         slider_properties[i]["gain"], 
+         slider_properties[i]["freq"], 
+         slider_properties[i]["bandwidth"]
+         );
+    }
+    return y;
   }
   
   var slider_properties = {};
