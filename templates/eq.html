@@ -90,8 +90,9 @@
 //          funGraph(ctx,axes,eq_response,"rgb(200,0,0)",3);
 
          for( i = 0;i <12;i++){
-         single_filter_graph(ctx,axes,i,"rgb(100,100,255)",1);
+         single_filter_graph(ctx,axes,i,"rgb(200,200,255)",1);
          }
+         full_filter_graph(ctx,axes,"rgb(255,0,0)",3);
 //          funGraph(ctx,axes,eq_response_legacy,"rgb(200,0,0)",4);
         }
         
@@ -121,11 +122,41 @@
          ctx.strokeStyle = color;
          
          calc_single_filter(i);
-         console.log(filter_mem[i]);
+//          console.log(filter_mem[i]);
          var c = 0;
          for (x=0; x <= 1; x+=mem_step_size){
            xx = x*(ctx.canvas.width-x0);
            yy = scale*filter_mem[i]["y"][c]*y_scaling;
+           if (xx==0)   ctx.moveTo(x0+xx,y0-yy);
+           else         ctx.lineTo(x0+xx,y0-yy);
+           c++;
+         }
+         ctx.stroke();
+        }
+        
+        function full_filter_graph (ctx,axes,color,thick) {
+//          console.log("filter Graph was called for ch " + i)
+         var xx, yy, dx=4, x0=axes.x0, y0=axes.y0, scale=axes.scale;
+         var iMax = Math.round((ctx.canvas.width-x0)/dx);
+         var iMin = axes.doNegativeX ? Math.round(-x0/dx) : 0;
+         ctx.beginPath();
+         ctx.lineWidth = thick;
+         ctx.strokeStyle = color;
+         
+         for (i = 0 ;i<12;i++){
+           calc_single_filter(i);
+         }
+//          console.log(filter_mem[i]);
+         var sum_filter_mem=0;
+ 
+         var c = 0;
+         for (x=0; x <= 1; x+=mem_step_size){
+           xx = x*(ctx.canvas.width-x0);
+           sum_filter_mem = 0;
+           for (i = 0; i<12;i++){
+             sum_filter_mem += filter_mem[i]["y"][c];
+           }
+           yy = scale*sum_filter_mem*y_scaling;
            if (xx==0)   ctx.moveTo(x0+xx,y0-yy);
            else         ctx.lineTo(x0+xx,y0-yy);
            c++;
