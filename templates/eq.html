@@ -38,28 +38,27 @@
   
   
   <script>
-        eq_offset = 0;
-        y_scaling = 0.05;
+  
+  
+        function f_of_x(x){
+           return Math.exp(Math.log(20)+x*(Math.log(20000)-Math.log(20)));
+        }
+        function x_of_f(f){
+           return (Math.log(f) - Math.log(20))/(Math.log(20000)-Math.log(20))
+        }
+        
+        
+        var eq_offset = 0;
+        var y_scaling = 0.05;
+        var x_scaling = 0.1;
         function fun1(x) {  return math.evaluate("re(exp(2*"+x+"*(i-0.2)))");  }
         function fun2(x) {return Math.cos(3*x);}
         function eq_response(x) { 
-           var f = Math.exp(Math.log(20)+x/10.*(Math.log(20000)-Math.log(20)));
-//            return single_filter_response( f,
-//              slider_properties[0]["gain"],
-//              slider_properties[0]["freq"],
-//              slider_properties[0]["bandwidth"]
-//            ) * y_scaling;
-              return full_filter_response(f) * y_scaling;
-        } // display +-10 db // convert x to frequency, x=10 -> f=20000
+              return full_filter_response(f_of_x(x*x_scaling)) * y_scaling;
+        } 
         function eq_response_legacy(x) { 
-           var f = Math.exp(Math.log(20)+x/10.*(Math.log(20000)-Math.log(20)));
-//            return single_filter_response( f,
-//              slider_properties[0]["gain"],
-//              slider_properties[0]["freq"],
-//              slider_properties[0]["bandwidth"]
-//            ) * y_scaling;
-              return full_filter_response_legacy(f) * y_scaling+0.1;
-        } // display +-10 db // convert x to frequency, x=10 -> f=20000
+              return full_filter_response_legacy(f_of_x(x*x_scaling)) * y_scaling+0.1;
+        } 
         
         function draw() {
          var canvas = document.getElementById("canvas");
@@ -204,7 +203,6 @@
         
         $( "#amount" ).html( "ch "+filter_chan + " gain " + gain + " freq " + freq + " bandwidth (oct) " + bandwidth);
         
-        eq_offset = gain/10;
         
         $.ajax({
             url : '/set_eq?filter_chan=' + filter_chan + '&bandwidth=' + bandwidth +'&freq=' + freq + '&gain=' + gain,
@@ -266,7 +264,7 @@
       var filter_chan = $(this).index();
       $( this ).empty().slider({
         
-        value: (Math.log(slider_properties[filter_chan]["freq"]) - Math.log(20))/(Math.log(20000)-Math.log(20))*100,
+        value: x_of_f(slider_properties[filter_chan]["freq"])*100,
         range: "min",
         min:0,
         max:100,
@@ -276,7 +274,7 @@
         
         
             var filter_chan = $(this).index();
-            slider_properties[filter_chan]["freq"] = Math.exp(Math.log(20)+ui.value/100.*(Math.log(20000)-Math.log(20)));
+            slider_properties[filter_chan]["freq"] = f_of_x(ui.value/100);
             update_backend(filter_chan);
            
         }
