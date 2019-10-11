@@ -144,14 +144,35 @@
     
     $( "#amount" ).html( "ch "+filter_chan + " gain " + gain + " freq " + freq + " bandwidth (oct) " + bandwidth);
     
-    eq_offset = gain/10;
     draw();
     
     $.ajax({
         url : '/set_eq?filter_chan=' + filter_chan + '&bandwidth=' + bandwidth +'&freq=' + freq + '&gain=' + gain,
         success: function(data) {
         } })  
-    return 1;
+  
+  }
+  
+  function update_backend_all(){
+  
+    for(filter_chan = 0; filter_chan <12; filter_chan++){
+    
+        var gain       = slider_properties[filter_chan]["gain"];
+        var freq       = slider_properties[filter_chan]["freq"];
+        var bandwidth  = slider_properties[filter_chan]["bandwidth"];
+        
+        $( "#amount" ).html( "ch "+filter_chan + " gain " + gain + " freq " + freq + " bandwidth (oct) " + bandwidth);
+        
+        eq_offset = gain/10;
+        
+        $.ajax({
+            url : '/set_eq?filter_chan=' + filter_chan + '&bandwidth=' + bandwidth +'&freq=' + freq + '&gain=' + gain,
+            success: function(data) {
+            } })  
+        
+    }
+    
+    draw();
   
   }
   
@@ -252,8 +273,10 @@
         slider_properties[i]["bandwidth"] = slider_properties[i]["default_bandwidth"];
         
         $("#gain > span").eq(i).slider("value",slider_properties[i]["default_gain"]);
-        $("#freq > span").eq(i).slider("value",slider_properties[i]["default_freq"]);
-        $("#bandwidth > span").eq(i).slider("value",slider_properties[i]["default_bandwidth"]);
+        $("#freq > span").eq(i).slider("value",
+             (Math.log(slider_properties[i]["freq"]) - Math.log(20))/(Math.log(20000)-Math.log(20))*100
+        );
+        $("#bandwidth > span").eq(i).slider("value",slider_properties[i]["default_bandwidth"]*60);
         
 //         $("#freq:nth-child("+i+")").val(slider_properties[i]["default_freq"]);
 //         $("#freq:nth-child("+i+")").slider("refresh")
@@ -261,10 +284,8 @@
 //         $("#gain:nth-child("+i+")").slider("refresh")
 //         $("#bandwidth:nth-child("+i+")").value = slider_properties[i]["default_bandwidth"];
 
-
-
       }
-//         update_backend(i);
+        update_backend_all();
     });
     
   } );
@@ -291,18 +312,18 @@
 <p id="amount">0</p>
 <div id="gain">
 <!--   channel - freq (Hz) - bandwidth (octaves) - init -->
-  <span id="gain0" >0-40-0.66-0</span>
-  <span id="gain1" >1-63-0.66-0</span>
-  <span>2-100-0.66-0</span>
-  <span>3-160-0.66-0</span>
-  <span>4-250-0.66-0</span>
-  <span>5-400-0.66-0</span>
-  <span>6-630-0.66-0</span>
-  <span>7-1000-0.66-0</span>
-  <span>8-1600-0.66-0</span>
-  <span>9-2500-0.66-0</span>
-  <span>10-4000-0.66-0</span>
-  <span>11-6300-0.66-0</span>
+  <span>0-40.00-1-0</span>
+  <span>1-63.00-1-0</span>
+  <span>2-100.0-1-0</span>
+  <span>3-160.0-1-0</span>
+  <span>4-250.0-1-0</span>
+  <span>5-400.0-1-0</span>
+  <span>6-630.0-1-0</span>
+  <span>7-1000.-1-0</span>
+  <span>8-1600.-1-0</span>
+  <span>9-2500.-1-0</span>
+  <span>10-4000-1-0</span>
+  <span>11-6300-1-0</span>
 </div>
 
 <br>
