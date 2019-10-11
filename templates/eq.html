@@ -151,8 +151,11 @@
         url : '/set_eq?filter_chan=' + filter_chan + '&bandwidth=' + bandwidth +'&freq=' + freq + '&gain=' + gain,
         success: function(data) {
         } })  
+    return 1;
   
   }
+  
+  
   
   $( function() {
     // setup graphic EQ
@@ -168,8 +171,11 @@
       slider_properties[filter_chan] = {}
       
       slider_properties[filter_chan]["freq"]       = freq;
+      slider_properties[filter_chan]["default_freq"]       = freq;
       slider_properties[filter_chan]["bandwidth"]  = bandwidth;
+      slider_properties[filter_chan]["default_bandwidth"]  = bandwidth;
       slider_properties[filter_chan]["gain"]       = gain;
+      slider_properties[filter_chan]["default_gain"]       = gain;
       
       $("#freq").append("<span>"+filter_chan+"</span>");
       $("#bandwidth").append("<span>"+filter_chan+"</span>");
@@ -239,6 +245,28 @@
        
     });
     
+    $( "#reset" ).click(function(){
+      for (i = 0; i<12 ; i++){
+        slider_properties[i]["gain"]      = slider_properties[i]["default_gain"];
+        slider_properties[i]["freq"]      = slider_properties[i]["default_freq"];
+        slider_properties[i]["bandwidth"] = slider_properties[i]["default_bandwidth"];
+        
+        $("#gain > span").eq(i).slider("value",slider_properties[i]["default_gain"]);
+        $("#freq > span").eq(i).slider("value",slider_properties[i]["default_freq"]);
+        $("#bandwidth > span").eq(i).slider("value",slider_properties[i]["default_bandwidth"]);
+        
+//         $("#freq:nth-child("+i+")").val(slider_properties[i]["default_freq"]);
+//         $("#freq:nth-child("+i+")").slider("refresh")
+//         $("#gain:nth-child("+i+")").val(slider_properties[i]["default_gain"]);
+//         $("#gain:nth-child("+i+")").slider("refresh")
+//         $("#bandwidth:nth-child("+i+")").value = slider_properties[i]["default_bandwidth"];
+
+
+
+      }
+//         update_backend(i);
+    });
+    
   } );
   </script>
 </head>
@@ -259,11 +287,12 @@
 <body onload="draw()">
 <canvas id="canvas" width="550" height="300"></canvas>
  
+<p><button id="reset">reset</button></p>
 <p id="amount">0</p>
 <div id="gain">
 <!--   channel - freq (Hz) - bandwidth (octaves) - init -->
-  <span>0-40-0.66-0</span>
-  <span>1-63-0.66-0</span>
+  <span id="gain0" >0-40-0.66-0</span>
+  <span id="gain1" >1-63-0.66-0</span>
   <span>2-100-0.66-0</span>
   <span>3-160-0.66-0</span>
   <span>4-250-0.66-0</span>
