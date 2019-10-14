@@ -337,13 +337,13 @@
             success: function(data) {
             } });
             
+    update_all_counter += 1;
+    if (update_all_counter < 12){
+            
     setTimeout(function(){
-      
-      if (update_all_counter < 12){
-        update_all_counter += 1;
-        update_all_callback();
-      }
-    }, midi_update_delay);
+      update_all_callback();
+      }, midi_update_delay);
+    }
     
   }
   
@@ -490,8 +490,7 @@
 <body onload="draw()">
 <canvas id="canvas" width="530" height="200"></canvas>
  
-<p><button id="reset">reset</button></p>
-<p id="amount">&nbsp;</p>
+<p><button id="reset">reset</button><span width=20>&nbsp;</span><span id="amount">&nbsp;</span></p>
 <div id="gain">
 <!--   channel - freq (Hz) - bandwidth (octaves) - init -->
   <span>0-40.00-2-0</span>
