@@ -297,7 +297,10 @@
         setTimeout(function(){
           midi_blocked = false; 
           ajax_to_backend(last_touched_channel);
+          $("#freq_h_slider").slider("value",(x_of_f(slider_properties[last_touched_channel]["freq"])*freq_slider_steps));
+          $("#bandwidth_h_slider").slider("value", slider_properties[last_touched_channel]["bandwidth"]*60);
         }, midi_update_delay);
+        
     }
     if ( graph_blocked == false){
         graph_blocked = true;
@@ -424,6 +427,46 @@
        
     });
     
+    $( "#freq_h_slider" ).slider({
+        
+//         value: x_of_f(slider_properties[filter_chan]["freq"])*freq_slider_steps,
+        value: 0,
+        range: "min",
+        min:0,
+        max:freq_slider_steps,
+        animate: true,
+        orientation: "horizontal",
+        slide: function( event, ui ) {
+        
+        
+            var filter_chan = last_touched_channel;
+            slider_properties[filter_chan]["freq"] = f_of_x(ui.value/freq_slider_steps);
+            update_backend(filter_chan);
+           
+        }
+       
+    });
+    
+    $( "#bandwidth_h_slider" ).slider({
+        
+//         value: x_of_f(slider_properties[filter_chan]["bandwidth"])*bandwidth_slider_steps,
+        value: 0,
+        range: "min",
+        min:1,
+        max:120,
+        animate: true,
+        orientation: "horizontal",
+        slide: function( event, ui ) {
+        
+        
+            var filter_chan = last_touched_channel;
+            slider_properties[filter_chan]["bandwidth"] = ui.value/60;
+            update_backend(filter_chan);
+           
+        }
+       
+    });
+    
     $( "#bandwidth > span" ).each(function() {
     
       var filter_chan = $(this).index();
@@ -519,6 +562,7 @@
   <span>11-6300-1-0</span> -->
 </div>
 
+
 <br>
 <br>
 <br>
@@ -527,6 +571,12 @@
 <br>
 <br>
 <br>
+<br>
+<br>
+<p><div  id='freq_h_slider'></div></p>
+<br>
+<br>
+<p><div  id='bandwidth_h_slider'></div></p>
 <br>
 <br>
 
