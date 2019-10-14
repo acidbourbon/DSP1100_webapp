@@ -152,10 +152,12 @@ def set_eq():
     filter_chan = int(request.args.get('filter_chan', 0))
     gain = int(request.args.get('gain', 0))
     
-    time.sleep(0.02)
     my_eq.set_freq(filter_chan,freq)
+    time.sleep(0.02)
     my_eq.set_bandwidth(filter_chan,bandwidth)
+    time.sleep(0.02)
     my_eq.set_gain(filter_chan,gain)
+    time.sleep(0.02)
     #time.sleep(0.1)
     
     return jsonify({
