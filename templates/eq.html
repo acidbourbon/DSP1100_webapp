@@ -41,7 +41,8 @@
   
   <script>
   
-        var update_delay = 100;
+        var midi_update_delay = 150;
+        var graph_update_delay = 50;
   
   
         function f_of_x(x){
@@ -277,7 +278,8 @@
   var slider_properties = {};
   
         
-  var midi_blocked = false; 
+  var midi_blocked  = false; 
+  var graph_blocked = false; 
   var last_touched_channel = 0;
   
   function update_backend(filter_chan){
@@ -293,9 +295,15 @@
         midi_blocked = true;
         setTimeout(function(){
           midi_blocked = false; 
-          draw();
           ajax_to_backend(last_touched_channel);
-        }, update_delay);
+        }, midi_update_delay);
+    }
+    if ( graph_blocked == false){
+        graph_blocked = true;
+        setTimeout(function(){
+          graph_blocked = false; 
+          draw();
+        }, graph_update_delay);
     }
     
   
@@ -334,7 +342,7 @@
         update_all_counter += 1;
         update_all_callback();
       }
-    }, update_delay);
+    }, midi_update_delay);
     
   }
   
