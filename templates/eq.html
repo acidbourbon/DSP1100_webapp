@@ -43,6 +43,7 @@
   
         var midi_update_delay = 150;
         var graph_update_delay = 50;
+        var freq_slider_steps = 300;
   
   
         function f_of_x(x){
@@ -288,7 +289,7 @@
     var freq       = slider_properties[filter_chan]["freq"];
     var bandwidth  = slider_properties[filter_chan]["bandwidth"];
     
-    $( "#amount" ).html( "ch "+filter_chan + " gain " + gain + " freq " + freq + " bandwidth (oct) " + bandwidth);
+    $( "#amount" ).html( "ch "+filter_chan + " :: gain " + gain + " dB :: freq " + Math.round(freq) + " Hz :: bandwidth " + Math.round(60*bandwidth)+"/60 oct");
     last_touched_channel = filter_chan;
     
     if ( midi_blocked == false){
@@ -405,17 +406,17 @@
       var filter_chan = $(this).index();
       $( this ).empty().slider({
         
-        value: x_of_f(slider_properties[filter_chan]["freq"])*100,
+        value: x_of_f(slider_properties[filter_chan]["freq"])*freq_slider_steps,
         range: "min",
         min:0,
-        max:100,
+        max:freq_slider_steps,
         animate: true,
         orientation: "vertical",
         slide: function( event, ui ) {
         
         
             var filter_chan = $(this).index();
-            slider_properties[filter_chan]["freq"] = f_of_x(ui.value/100);
+            slider_properties[filter_chan]["freq"] = f_of_x(ui.value/freq_slider_steps);
             update_backend(filter_chan);
            
         }
@@ -454,9 +455,10 @@
         
         $("#gain > span").eq(i).slider("value",slider_properties[i]["default_gain"]);
         $("#freq > span").eq(i).slider("value",
-             (Math.log(slider_properties[i]["freq"]) - Math.log(20))/(Math.log(20000)-Math.log(20))*100
+             (Math.log(slider_properties[i]["freq"]) - Math.log(20))/(Math.log(20000)-Math.log(20))*freq_slider_steps
         );
         $("#bandwidth > span").eq(i).slider("value",slider_properties[i]["default_bandwidth"]*60);
+        $("#amount").html("&nbsp;");
         
 //         $("#freq:nth-child("+i+")").val(slider_properties[i]["default_freq"]);
 //         $("#freq:nth-child("+i+")").slider("refresh")
@@ -486,10 +488,10 @@
 </p> -->
 
 <body onload="draw()">
-<canvas id="canvas" width="550" height="200"></canvas>
+<canvas id="canvas" width="530" height="200"></canvas>
  
 <p><button id="reset">reset</button></p>
-<p id="amount">0</p>
+<p id="amount">&nbsp;</p>
 <div id="gain">
 <!--   channel - freq (Hz) - bandwidth (octaves) - init -->
   <span>0-40.00-2-0</span>
