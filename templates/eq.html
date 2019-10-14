@@ -274,6 +274,10 @@
   
   var slider_properties = {};
   
+        
+  var midi_blocked = false; 
+  var last_touched_channel = 0;
+  
   function update_backend(filter_chan){
     
     var gain       = slider_properties[filter_chan]["gain"];
@@ -281,14 +285,28 @@
     var bandwidth  = slider_properties[filter_chan]["bandwidth"];
     
     $( "#amount" ).html( "ch "+filter_chan + " gain " + gain + " freq " + freq + " bandwidth (oct) " + bandwidth);
+    last_touched_channel = filter_chan;
     
-    draw();
+    if ( midi_blocked == false){
+        midi_blocked = true;
+        setTimeout(function(){
+          midi_blocked = false; 
+          draw();
+          ajax_to_backend(last_touched_channel);
+        }, 100);
+    }
     
-    $.ajax({
-        url : '/set_eq?filter_chan=' + filter_chan + '&bandwidth=' + bandwidth +'&freq=' + freq + '&gain=' + gain,
-        success: function(data) {
-        } })  
   
+  }
+  
+  function ajax_to_backend(filter_chan){
+    var gain       = slider_properties[filter_chan]["gain"];
+    var freq       = slider_properties[filter_chan]["freq"];
+    var bandwidth  = slider_properties[filter_chan]["bandwidth"];
+        $.ajax({
+            url : '/set_eq?filter_chan=' + filter_chan + '&bandwidth=' + bandwidth +'&freq=' + freq + '&gain=' + gain,
+            success: function(data) {
+            } });
   }
   
   function update_backend_all(){
@@ -302,10 +320,11 @@
         $( "#amount" ).html( "ch "+filter_chan + " gain " + gain + " freq " + freq + " bandwidth (oct) " + bandwidth);
         
         
-        $.ajax({
-            url : '/set_eq?filter_chan=' + filter_chan + '&bandwidth=' + bandwidth +'&freq=' + freq + '&gain=' + gain,
-            success: function(data) {
-            } })  
+//         $.ajax({
+//             url : '/set_eq?filter_chan=' + filter_chan + '&bandwidth=' + bandwidth +'&freq=' + freq + '&gain=' + gain,
+//             success: function(data) {
+//             } })  
+        ajax_to_backend(filter_chan);
         
     }
     
