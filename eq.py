@@ -156,7 +156,7 @@ def set_eq():
     my_eq.set_freq(filter_chan,freq)
     my_eq.set_bandwidth(filter_chan,bandwidth)
     my_eq.set_gain(filter_chan,gain)
-    time.sleep(0.1)
+    #time.sleep(0.1)
     
     return jsonify({
         "dummy" : 0
