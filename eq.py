@@ -143,12 +143,10 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    #return 'Hello world'
     return render_template('eq.html') # has to be located in ./templates/
 
 @app.route('/set_eq')
 def set_eq():
-    #a = int(request.args.get('a', 0))
     freq = float(request.args.get('freq', 500))
     bandwidth = float(request.args.get('bandwidth', 0.66))
     filter_chan = int(request.args.get('filter_chan', 0))
