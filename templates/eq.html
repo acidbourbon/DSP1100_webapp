@@ -324,6 +324,30 @@
   }
   
   
+  function set_sliders(){
+  
+    for (i = 0; i<12 ; i++){
+      
+      $("#gain > span").eq(i).slider("value",slider_properties[i]["gain"]);
+      $("#freq > span").eq(i).slider("value",
+           (Math.log(slider_properties[i]["freq"]) - Math.log(20))/(Math.log(20000)-Math.log(20))*freq_slider_steps
+      );
+      $("#bandwidth > span").eq(i).slider("value",slider_properties[i]["bandwidth"]*60);
+      $("#amount").html("&nbsp;");
+    }
+  }
+  
+  function load_mem(){
+    $.ajax({
+            url : '/load_mem',
+            success: function(data) {
+              $.extend(true, slider_properties, data);
+              set_sliders();
+              draw();
+            } });
+  }
+  
+  
   var update_all_counter = 12;
   
   function update_all_callback(){
@@ -490,30 +514,22 @@
        
     });
     
+    
+    
     $( "#reset" ).click(function(){
       for (i = 0; i<12 ; i++){
         slider_properties[i]["gain"]      = slider_properties[i]["default_gain"];
         slider_properties[i]["freq"]      = slider_properties[i]["default_freq"];
         slider_properties[i]["bandwidth"] = slider_properties[i]["default_bandwidth"];
-        
-        $("#gain > span").eq(i).slider("value",slider_properties[i]["default_gain"]);
-        $("#freq > span").eq(i).slider("value",
-             (Math.log(slider_properties[i]["freq"]) - Math.log(20))/(Math.log(20000)-Math.log(20))*freq_slider_steps
-        );
-        $("#bandwidth > span").eq(i).slider("value",slider_properties[i]["default_bandwidth"]*60);
-        $("#amount").html("&nbsp;");
-        
-//         $("#freq:nth-child("+i+")").val(slider_properties[i]["default_freq"]);
-//         $("#freq:nth-child("+i+")").slider("refresh")
-//         $("#gain:nth-child("+i+")").val(slider_properties[i]["default_gain"]);
-//         $("#gain:nth-child("+i+")").slider("refresh")
-//         $("#bandwidth:nth-child("+i+")").value = slider_properties[i]["default_bandwidth"];
-
       }
+        set_sliders();
         update_backend_all();
     });
     
-  } );
+    load_mem();
+    
+  } ); // end of the initial set-up call
+  
   </script>
 </head>
 <body>

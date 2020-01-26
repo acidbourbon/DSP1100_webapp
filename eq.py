@@ -7,6 +7,8 @@ import time
 import mido
 import numpy as np
 
+import pickle as pl
+
 class behringer_eq:
   output = None
   filter_chan = -1
@@ -77,14 +79,25 @@ class behringer_eq:
     
   
   
-  bandwidth_mem = {}
-  freq_mem      = {}
+  #bandwidth_mem = {}
+  #freq_mem      = {}
+  #gain_mem      = {}
+  
+  state_mem = {}
+  
+
   
   def __init__(self):
     try:
       self.output = mido.open_output('CH345 MIDI 1') # this is the logilink midi thing
     except:
       pass
+  
+  def store_mem(self):
+    pl.dump(self.state_mem,open('state_mem.pickle','wb'))
+
+  def load_mem(self):
+    state_mem = pl.load(open('state_mem.pickle','rb'))
     
   def set_gain(self,filter_chan,gain):
     self.select_filter_chan(filter_chan)
@@ -94,6 +107,10 @@ class behringer_eq:
       self.output.send(mido.Message('control_change', control=16, value=gain+48))
     except:
       pass
+    
+    if not(filter_chan in self.state_mem):
+      self.state_mem[filter_chan] = {}
+    self.state_mem[filter_chan]["gain"] = gain
     
   def set_bandwidth(self,filter_chan,bandwidth):
     
@@ -107,7 +124,10 @@ class behringer_eq:
       self.output.send(mido.Message('control_change', control=15, value=int(bandwidth*60.)))
     except:
       pass
-    self.bandwidth_mem[filter_chan] = bandwidth
+    #self.bandwidth_mem[filter_chan] = bandwidth
+    if not(filter_chan in self.state_mem):
+      self.state_mem[filter_chan] = {}
+    self.state_mem[filter_chan]["bandwidth"] = bandwidth
     
   def set_freq(self,filter_chan,freq):
       
@@ -124,7 +144,10 @@ class behringer_eq:
       self.output.send(mido.Message('control_change', control=14, value=int(freq_fine_midi_val)))
     except:
       pass
-    self.freq_mem[filter_chan] = freq
+    #self.freq_mem[filter_chan] = freq
+    if not(filter_chan in self.state_mem):
+      self.state_mem[filter_chan] = {}
+    self.state_mem[filter_chan]["freq"] = freq
     
 
   def select_filter_chan(self,filter_chan):
@@ -159,10 +182,17 @@ def set_eq():
     my_eq.set_gain(filter_chan,gain)
     time.sleep(0.02)
     #time.sleep(0.1)
+    my_eq.store_mem()
     
     return jsonify({
         "dummy" : 0
     })
+
+@app.route('/load_mem')
+def load_mem():
+    my_eq.load_mem()
+    
+    return jsonify( my_eq.state_mem )
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
