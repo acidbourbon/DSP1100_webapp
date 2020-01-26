@@ -92,12 +92,34 @@ class behringer_eq:
       self.output = mido.open_output('CH345 MIDI 1') # this is the logilink midi thing
     except:
       pass
+    self.load_mem()
+   
+    for filter_chan in range(0,12):
+      if filter_chan in self.state_mem:
+          
+        freq = self.state_mem[filter_chan]["freq"]
+        gain = self.state_mem[filter_chan]["gain"]
+        bandwidth = self.state_mem[filter_chan]["bandwidth"]
+        
+        self.set_freq(filter_chan,freq)
+        time.sleep(0.02)
+        self.set_bandwidth(filter_chan,bandwidth)
+        time.sleep(0.02)
+        self.set_gain(filter_chan,gain)
+        time.sleep(0.02)
+        print("sending data for channel "+str(filter_chan))
+      else:
+        self.set_gain(filter_chan,0)
+    
   
   def store_mem(self):
     pl.dump(self.state_mem,open('state_mem.pickle','wb'))
 
   def load_mem(self):
-    state_mem = pl.load(open('state_mem.pickle','rb'))
+    try:
+      self.state_mem = pl.load(open('state_mem.pickle','rb'))
+    except:
+      pass
     
   def set_gain(self,filter_chan,gain):
     self.select_filter_chan(filter_chan)
