@@ -1,4 +1,5 @@
 # prerequisites
 
-sudo pip3 install flask mido pickle
+sudo apt-get install python3-flask python3-mido python3-numpy python3-rtmidi
+
 
