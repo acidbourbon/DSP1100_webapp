@@ -90,6 +90,7 @@ class behringer_eq:
   def __init__(self):
     try:
       self.output = mido.open_output('CH345 MIDI 1') # this is the logilink midi thing
+      time.sleep(2)
     except:
       pass
     self.load_mem()
@@ -110,6 +111,8 @@ class behringer_eq:
         print("sending data for channel "+str(filter_chan))
       else:
         self.set_gain(filter_chan,0)
+        time.sleep(0.02)
+      time.sleep(0.1)
     
   
   def store_mem(self):
