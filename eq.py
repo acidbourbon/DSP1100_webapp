@@ -97,10 +97,16 @@ class behringer_eq:
    
     for filter_chan in range(0,12):
       if filter_chan in self.state_mem:
-          
-        freq = self.state_mem[filter_chan]["freq"]
-        gain = self.state_mem[filter_chan]["gain"]
-        bandwidth = self.state_mem[filter_chan]["bandwidth"]
+        
+        freq = 100
+        if "freq" in self.state_mem[filter_chan]:
+            freq = self.state_mem[filter_chan]["freq"]
+        gain = 0
+        if "gain" in self.state_mem[filter_chan]:
+            gain = self.state_mem[filter_chan]["gain"]
+        bandwidth = 2
+        if "bandwidth" in self.state_mem[filter_chan]:
+            bandwidth = self.state_mem[filter_chan]["bandwidth"]
         
         self.set_freq(filter_chan,freq)
         time.sleep(0.02)
